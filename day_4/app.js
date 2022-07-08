@@ -23,6 +23,34 @@ const data_boards =()=> {
 
 const Board = require("./board");
 
-let myBoard = new Board(data_boards()[0])
+let all_Boards = []
 
-console.log(myBoard.ro_cols.rows)
+data_boards().forEach(board => {
+    all_Boards.push(new Board(board));
+});
+
+const run_a_game =()=>{
+
+    let game_numbers = data_nums[0].split(',');
+
+    let winner = false
+    let i=0;
+
+    while(!winner && i<game_numbers.length){
+        // for(let i=0; i<game_numbers.length;i++){
+            let current_num = game_numbers[i]
+            all_Boards.forEach(board=>{
+                if(board.check_current_num(current_num)){
+                    board.mark_num(current_num);
+                    if(board.isWinner()){
+                        console.log(parseInt(current_num) * board.unmarked_nums_sum())
+                        winner = true
+                    }
+                };
+            })
+        // }      
+        i++  
+    }
+}
+
+run_a_game()
