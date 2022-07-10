@@ -20,6 +20,7 @@ module.exports = class Board {
                 [],
             ]
         }
+        this.has_won = false
     }
 
     get getBoard(){
@@ -159,6 +160,7 @@ module.exports = class Board {
                 if(row.length===5){
                     ix = index;
                     rc = 'row'
+                    this.has_won = true
                     winner = true
                 }
             })            
@@ -168,6 +170,7 @@ module.exports = class Board {
             if(col.length===5){
                 ix = index;
                 rc = 'col';
+                this.has_won = true
                 winner = true
             }
         })
@@ -194,6 +197,7 @@ module.exports = class Board {
             this.board_values.forEach((val, index)=>{
                 if(marked===val){
                     unmarked_nums.splice(index,1)
+                    // console.log('unmarked numbers:',unmarked_nums)
                 }
             })
         })

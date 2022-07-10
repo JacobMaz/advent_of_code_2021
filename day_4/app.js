@@ -29,28 +29,63 @@ data_boards().forEach(board => {
     all_Boards.push(new Board(board));
 });
 
-const run_a_game =()=>{
+const run_a_game =(board, i)=>{
+    console.log('running',board)
 
     let game_numbers = data_nums[0].split(',');
-
+    let called_numbers = []
     let winner = false
-    let i=0;
 
     while(!winner && i<game_numbers.length){
-        // for(let i=0; i<game_numbers.length;i++){
-            let current_num = game_numbers[i]
-            all_Boards.forEach(board=>{
-                if(board.check_current_num(current_num)){
-                    board.mark_num(current_num);
-                    if(board.isWinner()){
-                        console.log(parseInt(current_num) * board.unmarked_nums_sum())
-                        winner = true
-                    }
-                };
-            })
-        // }      
+
+        let current_num = game_numbers[i]
+        called_numbers.push(current_num)
+        if(board.check_current_num(current_num)){
+            board.mark_num(current_num);
+            if(board.isWinner()){
+                console.log('SOLUTION:', +current_num * board.unmarked_nums_sum())
+                winner = true
+            }
+        };
+
         i++  
     }
 }
 
-run_a_game()
+const find_last_board =()=>{
+    
+    let game_numbers = data_nums[0].split(',');
+
+    let current_boards = all_Boards;
+    let called_numbers = []
+    let winning_boards = []
+
+    for(let i=0; i<game_numbers.length+1;i++){
+        if(winning_boards.length===99){
+            current_boards.forEach(board=>{
+                // console.log(board.has_won)
+                if(!board.has_won){
+                    run_a_game(board,i)
+                }
+            })
+            break
+        }
+        let cur_num = game_numbers[i];
+        called_numbers.push(cur_num)
+        // console.log('called numbers:', called_numbers)
+        current_boards.forEach(board=>{
+            if(board.check_current_num(cur_num)){
+                board.mark_num(cur_num);
+                if(board.isWinner() && !winning_boards.includes(board)){
+                    winning_boards.push(board)
+                    // current_boards = current_boards.splice(current_boards.indexOf(board),1)
+                }
+            }
+        })
+    }
+
+}
+
+// run_a_game()
+
+find_last_board()
