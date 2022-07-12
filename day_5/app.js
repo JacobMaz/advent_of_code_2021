@@ -1,5 +1,6 @@
 
-const fs = require('fs')
+const fs = require('fs');
+const { type } = require('os');
 
 const data = fs.readFileSync('data.txt', {encoding: 'utf-8'})
     .split('\n')
@@ -46,6 +47,7 @@ arr_size = find_min_max();
 
 let vent_matrix = Array(arr_size).fill().map(()=>Array(arr_size).fill(0))
 
+console.log('size:', arr_size, vent_matrix.length)
 // vent_matrix[0][0] = 'a'
 // vent_matrix[0][3] = 'x'
 // vent_matrix[3][0] = 'y'
@@ -61,11 +63,15 @@ const fill_vent_matrix =()=>{
 
         let xys = line.split(' -> ');
         
-        let x1 = xys[0].split(',')[0]
-        let x2 = xys[1].split(',')[0]
+        let x1 = parseInt(xys[0].split(',')[0])-1
+        let x2 = parseInt(xys[1].split(',')[0])-1
 
-        let y1 = xys[0].split(',')[1]
-        let y2 = xys[1].split(',')[1]
+        let y1 = parseInt(xys[0].split(',')[1])-1
+        let y2 = parseInt(xys[1].split(',')[1])-1
+
+        if(x1===0||x2===0||y1===0||y2===0){
+            console.log('oops')
+        }
 
         if(check_match(x1,x2)){
             x_match = true;
@@ -84,7 +90,37 @@ const fill_vent_matrix =()=>{
                 vent_matrix[y1][i] += 1
             }
         }
+
+        if(Math.abs(x1-x2)===Math.abs(y1-y2)){
+            if(check_diagonal_direction(x1,x2,y1,y2)){
+                let ii=0;
+                for(let i=Math.min(y1,y2); i<=Math.max(y1,y2); i++){
+                    vent_matrix[i][Math.min(x1,x2)+ii] += 1
+                    ii++
+                }
+            } else if(!check_diagonal_direction(x1,x2,y1,y2)){
+                let ii=0;
+                for(let i=Math.min(x1,x2); i<=Math.max(x1,x2); i++){
+                    vent_matrix[Math.max(y1,y2)+ii][i] += 1
+                    ii--
+                }
+            }
+        }
     })
+}
+
+const check_diagonal_direction =(x1,x2,y1,y2)=>{
+    let x = x1-x2
+    let y = y1-y2
+
+    let isSameDirection = false
+
+    if((x>0 && y>0) || (x<0 && y<0)){
+        isSameDirection = true
+    } else if ((x>0 && y<0) || (x<0 && y>0)){
+        isSameDirection = false
+    }
+    return isSameDirection
 }
 
 const check_match =(a,b)=>{
